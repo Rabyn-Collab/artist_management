@@ -163,12 +163,12 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, email, phone, dob, gender, address, role } = req.body;
+    const { first_name, last_name, dob, gender, address, role } = req.body;
     const formattedDob = new Date(dob).toISOString().split('T')[0];
 
     const [rows] = await db.query(
-      'UPDATE user SET first_name = ?, last_name = ?, email = ?, phone = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = NOW() WHERE id = ?',
-      [first_name, last_name, email, phone, formattedDob, gender, address, role, id]
+      'UPDATE user SET first_name = ?, last_name = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = NOW() WHERE id = ?',
+      [first_name, last_name, formattedDob, gender, address, role, id]
     );
     return res.status(200).json({
       message: "User updated successfully",
