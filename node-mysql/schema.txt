@@ -1,0 +1,57 @@
+CREATE DATABASE artist_management_sys;
+
+USE artist_management_sys;
+
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(500) NOT NULL,
+    phone VARCHAR(20),
+    dob DATETIME,
+    gender ENUM('m', 'f', 'o'),
+    address VARCHAR(255),
+    role ENUM('super_admin', 'artist_manager', 'artist') DEFAULT 'super_admin',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE  artist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    dob DATE,
+    gender ENUM('m', 'f', 'o'),
+    address VARCHAR(255),
+    first_release_year INT,
+    no_of_albums_released INT,
+    user_id INT UNIQUE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE music (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    artist_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    album_name VARCHAR(255),
+    genre ENUM('rnb', 'country', 'classic', 'rock', 'jazz'),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE
+);
+
+
+
+
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=admin
+DB_DATABASE=artist_management_sys
+JWT_SECRET=secret
+NODE_ENV=development
