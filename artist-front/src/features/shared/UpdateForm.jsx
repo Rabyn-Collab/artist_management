@@ -12,8 +12,8 @@ import { useUpdateUserMutation } from "../auth/userApi";
 const valSchema = Yup.object({
   first_name: Yup.string().required(),
   last_name: Yup.string().required(),
-  email: Yup.string().required(),
-  phone: Yup.string().required(),
+  // email: Yup.string().required(),
+  // phone: Yup.string().required(),
   dob: Yup.string().required(),
   gender: Yup.string().required(),
   address: Yup.string().required(),
@@ -34,8 +34,8 @@ const UpdateForm = ({ user, token }) => {
         initialValues={{
           first_name: user?.first_name,
           last_name: user?.last_name,
-          email: user?.email,
-          phone: user?.phone,
+          // email: user?.email,
+          // phone: user?.phone,
           dob: user?.dob,
           gender: user?.gender,
           address: user?.address,
@@ -82,14 +82,14 @@ const UpdateForm = ({ user, token }) => {
                   </div>
                   <div>
                     <Input
-                      name="email"
+                      name="address"
                       onChange={handleChange}
-                      type="email"
-                      value={values.email}
-                      label="Email" />
-                    {errors.email && touched.email && <h1 className="text-red-700 text-sm">{errors.email}</h1>}
+                      type="text"
+                      value={values.address}
+                      label="Address" />
+                    {errors.address && touched.address && <h1 className="text-red-700 text-sm">{errors.address}</h1>}
                   </div>
-                  <div>
+                  {/* <div>
                     <Input
                       name="phone"
                       onChange={handleChange}
@@ -97,7 +97,7 @@ const UpdateForm = ({ user, token }) => {
                       value={values.phone}
                       label="Phone" />
                     {errors.phone && touched.phone && <h1 className="text-red-700 text-sm">{errors.phone}</h1>}
-                  </div>
+                  </div> */}
                   <div>
                     <Select
                       value={values.gender}
@@ -136,15 +136,7 @@ const UpdateForm = ({ user, token }) => {
                     />
                     {errors.dob && touched.dob && <h1 className="text-red-700 text-sm">{errors.dob}</h1>}
                   </div>
-                  <div>
-                    <Input
-                      name="address"
-                      onChange={handleChange}
-                      type="text"
-                      value={values.address}
-                      label="Address" />
-                    {errors.address && touched.address && <h1 className="text-red-700 text-sm">{errors.address}</h1>}
-                  </div>
+
 
                   {user?.role === "super_admin" && <div>
                     <Select
