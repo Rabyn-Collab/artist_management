@@ -6,7 +6,9 @@ import { useUploadCsvMutation } from '../features/artist/artistApi'
 
 
 const DashboardLayout = () => {
-  const [{ isLoading }] = useUploadCsvMutation();
+  const [someFunc, { isLoading }] = useUploadCsvMutation();
+
+
 
   return (
     <LoadingOverlay
