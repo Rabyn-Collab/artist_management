@@ -23,6 +23,7 @@ const valSchema = Yup.object({
 
 
 const UpdateForm = ({ user, token }) => {
+  const { user: logUser } = useSelector(state => state.userSlice);
 
   const [updateUser, { isLoading }] = useUpdateUserMutation();
   const nav = useNavigate();
@@ -130,7 +131,7 @@ const UpdateForm = ({ user, token }) => {
                   </div>
 
 
-                  {user?.role === "super_admin" && <div>
+                  {logUser?.role !== "artist_manager" && <div>
                     <Select
                       value={values.role}
                       name="role"
