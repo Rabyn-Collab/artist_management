@@ -25,10 +25,8 @@ export const createArtist = async (req, res) => {
     );
   } catch (err) {
 
-
-    return res.status(500).json({
-      message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 
@@ -82,10 +80,8 @@ export const csvArtistCreate = async (req, res) => {
     }
 
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }
@@ -116,10 +112,8 @@ export const getAllArtists = async (req, res) => {
 
     return res.status(200).json({ page, limit, totalArtists, totalPages, users: rows });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -131,9 +125,8 @@ export const getArtistById = async (req, res) => {
     const [rows] = await db.query("SELECT * FROM artist WHERE user_id = ?", [id]);
     return res.status(200).json(rows);
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }
@@ -149,10 +142,8 @@ export const updateArtist = async (req, res) => {
     );
     return res.status(200).json(rows);
   } catch (err) {
-
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }
@@ -163,9 +154,8 @@ export const removeArtist = async (req, res) => {
     const [rows] = await db.query('DELETE FROM user WHERE id = ?', [id]);
     return res.status(200).json(rows);
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }

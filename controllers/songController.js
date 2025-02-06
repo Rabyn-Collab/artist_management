@@ -8,9 +8,9 @@ export const getSongByArtist = async (req, res) => {
     const { id } = req.params;
     const [song] = await db.query("SELECT * FROM music WHERE artist_id = ?", [id]);
     return res.status(200).json(song);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }
@@ -27,9 +27,9 @@ export const getSongById = async (req, res) => {
     //   });
     // }
     return res.status(200).json(song[0]);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 }
@@ -54,10 +54,10 @@ export const createSong = async (req, res) => {
       message: "Song created successfully",
 
     });
-  } catch (error) {
+  } catch (err) {
 
-    return res.status(500).json({
-      message: "Internal server error",
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -74,10 +74,9 @@ export const updateSong = async (req, res) => {
     return res.status(200).json({
       message: "Song updated successfully",
     });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Internal server error",
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -90,9 +89,9 @@ export const removeSong = async (req, res) => {
     return res.status(200).json({
       message: "Song removed successfully",
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
