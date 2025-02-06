@@ -31,7 +31,7 @@ export function ArtistTable({ data, isUser, user }) {
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-2 flex items-center justify-between gap-8">
+        <div className="mb-2 flex items-center md:flex-col justify-between md:items-start  gap-8">
           <div>
             <Typography variant="h5" color="blue-gray">
               {isUser && user?.role !== 'artist_manager' ? 'Users List' : 'Artists'}
