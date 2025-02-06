@@ -89,15 +89,7 @@ const UpdateForm = ({ user, token }) => {
                       label="Address" />
                     {errors.address && touched.address && <h1 className="text-red-700 text-sm">{errors.address}</h1>}
                   </div>
-                  {/* <div>
-                    <Input
-                      name="phone"
-                      onChange={handleChange}
-                      type="number"
-                      value={values.phone}
-                      label="Phone" />
-                    {errors.phone && touched.phone && <h1 className="text-red-700 text-sm">{errors.phone}</h1>}
-                  </div> */}
+
                   <div>
                     <Select
                       value={values.gender}
