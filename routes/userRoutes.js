@@ -13,7 +13,7 @@ router.route('/register').post(registerUser);
 // User routes
 router.route('/').get(checkUser, superAdminCheck, getAllUsers);
 router.route('/artists').get(checkUser, adminManagerCheck, getArtistsUsers);
-router.route('/:id').get(checkUser, getUserById).patch(checkUser, superAdminCheck, updateUser).delete(checkUser, superAdminCheck, removeUser);
+router.route('/:id').get(checkUser, getUserById).patch(updateUser).delete(checkUser, superAdminCheck, removeUser);
 
 
 
