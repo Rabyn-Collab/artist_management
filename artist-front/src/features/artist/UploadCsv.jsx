@@ -30,7 +30,7 @@ const UploadCsv = () => {
         disabled={isLoading}
         name='csv'
         accept=".csv"
-        type='file' label='upload cv' className="flex items-center gap-3 " placeholder='' variant='outlined' color='black' />
+        type='file' label='upload csv file' className="flex items-center gap-3 " placeholder='' variant='outlined' color='black' />
     </div>
 
 
