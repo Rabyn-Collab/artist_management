@@ -13,7 +13,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: ['http://localhost:3000', ['https://artist-management-livid.vercel.app']],
   credentials: true,
   // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   // allowedHeaders: ['Content-Type', 'Authorization']
@@ -26,6 +26,10 @@ app.use(fileUpload({
   abortOnLimit: true
 }));
 
+
+app.get("/", (req, res) => {
+  return res.status(200).json({ message: "Server is running" });
+});
 
 // Routes
 app.use("/api/users", userRoutes);
