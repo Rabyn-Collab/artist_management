@@ -44,7 +44,9 @@ export function ArtistTable({ data, isUser, user }) {
             <Button onClick={() => nav(isUser && user?.role !== 'artist_manager' ? '/register' : '/artist-form')} className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> {isUser && user?.role !== 'artist_manager' ? 'Add user' : 'Add artist'}
             </Button>
-            <UploadCsv />
+            {/* <Button size="sm">Csv Import</Button>
+            <UploadCsv /> */}
+
 
           </div>}
         </div>
