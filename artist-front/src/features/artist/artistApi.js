@@ -64,6 +64,21 @@ export const artistApi = mainApi.injectEndpoints({
       invalidatesTags: ['Artist', 'User'],
     }),
 
+
+    importCsv: builder.mutation({
+      query: (q) => ({
+        url: '/artists/export',
+        method: 'GET',
+        headers: {
+          Authorization: q,
+          'Accept': 'text/csv',  // Specify that the server will return a CSV file
+        },
+        responseHandler: (response) => response.text(), // Ensure response is handled as text
+      }),
+      invalidatesTags: ['Artist'],
+    }),
+
+
     removeArtist: builder.mutation({
       query: (q) => ({
         url: `/artists/${q.id}`,
@@ -86,5 +101,5 @@ export const artistApi = mainApi.injectEndpoints({
 });
 
 
-export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation, useUpdateArtistMutation } = artistApi;
+export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation, useUpdateArtistMutation, useImportCsvMutation } = artistApi;
 

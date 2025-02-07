@@ -11,9 +11,10 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router";
-import { useRemoveArtistMutation } from "../artist/artistApi";
+import { useImportCsvMutation, useRemoveArtistMutation } from "../artist/artistApi";
 import RemoveDialog from "./RemoveDialog";
 import UploadCsv from "../artist/UploadCsv";
+import { toast } from "react-toastify";
 
 
 const TABLE_HEAD1 = ["Name", "Gender", "First Release Year", "No. of Albums", "Edit", "Remove", "List of Songs"];
@@ -27,6 +28,27 @@ const TABLE_HEAD2 = ["Name", "Gender", "First Release Year", "No. of Albums", "L
 export function ArtistTable({ data, isUser, user }) {
   const TABLE_HEAD = user.role === 'super_admin' ? TABLE_HEAD2 : TABLE_HEAD1;
   const nav = useNavigate();
+  const [importCsv, { isLoading }] = useImportCsvMutation();
+  const handleImport = async () => {
+    try {
+
+      const res = await importCsv(user.token).unwrap();
+      const blob = new Blob([res], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'artists_export.csv';
+      link.click();
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Import Successfully');
+    } catch (err) {
+
+      toast.dismiss();
+      toast.error(err.data?.message || err.message || 'Something went wrong');
+    }
+  };
+
 
   return (
     <Card className="h-full w-full">
@@ -44,8 +66,8 @@ export function ArtistTable({ data, isUser, user }) {
             <Button onClick={() => nav(isUser && user?.role !== 'artist_manager' ? '/register' : '/artist-form')} className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> {isUser && user?.role !== 'artist_manager' ? 'Add user' : 'Add artist'}
             </Button>
-            {/* <Button size="sm">Csv Import</Button>
-            <UploadCsv /> */}
+            <Button onClick={handleImport} loading={isLoading} size="sm">Csv Import</Button>
+            {/* <UploadCsv /> */}
 
 
           </div>}
