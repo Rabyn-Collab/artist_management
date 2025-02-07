@@ -122,7 +122,7 @@ export const getAllArtists = async (req, res) => {
 export const getArtistById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await db.query("SELECT * FROM artist WHERE user_id = ?", [id]);
+    const [rows] = await db.query("SELECT * FROM artist WHERE id = ?", [id]);
     return res.status(200).json(rows);
   } catch (err) {
     return res.status(400).json({
@@ -135,10 +135,11 @@ export const getArtistById = async (req, res) => {
 export const updateArtist = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, password, dob, gender, address, first_release_year, no_of_albums_released } = req.body;
+    const { name, dob, gender, address, first_release_year, no_of_albums_released } = req.body;
+    const formattedDob = new Date(dob).toISOString().split('T')[0];
     const [rows] = await db.query(
-      'UPDATE user SET name = ?, password = ?, dob = ?, gender = ?, address = ?, first_release_year = ?, no_of_albums_released = ?, updated_at = NOW() WHERE id = ?',
-      [name, password, dob, gender, address, first_release_year, no_of_albums_released, id]
+      'UPDATE artist SET name = ?, dob = ?, gender = ?, address = ?, first_release_year = ?, no_of_albums_released = ?, updated_at = NOW() WHERE id = ?',
+      [name, formattedDob, gender, address, first_release_year, no_of_albums_released, id]
     );
     return res.status(200).json(rows);
   } catch (err) {
