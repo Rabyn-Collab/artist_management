@@ -40,6 +40,17 @@ export const artistApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['Artist', 'User'],
     }),
+    updateArtist: builder.mutation({
+      query: (q) => ({
+        url: `/artists/${q.id}`,
+        method: 'PATCH',
+        body: q.body,
+        headers: {
+          Authorization: q.token
+        }
+      }),
+      invalidatesTags: ['Artist', 'User'],
+    }),
 
     uploadCsv: builder.mutation({
       query: (q) => ({
@@ -72,5 +83,5 @@ export const artistApi = mainApi.injectEndpoints({
 });
 
 
-export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation } = artistApi;
+export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation, useUpdateArtistMutation } = artistApi;
 

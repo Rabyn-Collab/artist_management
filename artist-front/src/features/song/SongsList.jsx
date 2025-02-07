@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import RemoveDialog from '../shared/RemoveDialog';
 
 const SongsList = ({ user }) => {
+  console.log(user);
   const nav = useNavigate();
   const [removeSong, { isLoading: load }] = useRemoveSongMutation();
   const { data, isLoading, error } = useGetArtistsSongsQuery(user?.id);
@@ -37,7 +38,7 @@ const SongsList = ({ user }) => {
 
       }
 
-      <Card className='max-w-[500px]'>
+      {data?.length > 0 && <Card className='max-w-[500px]'>
         <List>
 
           {data && data.map((song) => (
@@ -68,7 +69,7 @@ const SongsList = ({ user }) => {
 
 
         </List>
-      </Card>
+      </Card>}
 
 
 

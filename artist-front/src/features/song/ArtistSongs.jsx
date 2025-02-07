@@ -29,14 +29,14 @@ const ArtistSongs = () => {
         data?.length === 0 && <div className='flex items-center flex-col mt-[10%] '>
 
           <div>
-            <Typography className=" text-green-900">Add a Song To Show !</Typography>
+            <Typography className=" text-green-900">The artist has no songs !</Typography>
           </div>
 
         </div>
 
       }
 
-      <Card className='max-w-[500px]'>
+      {data?.length > 0 && <Card className='max-w-[500px]'>
         <List>
 
           {data && data.map((song) => (
@@ -59,7 +59,7 @@ const ArtistSongs = () => {
 
 
         </List>
-      </Card>
+      </Card>}
 
 
 

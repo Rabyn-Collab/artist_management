@@ -133,7 +133,7 @@ export function ArtistTable({ data, isUser, user }) {
                     {user.role === 'artist_manager' && <td className={classes}>
                       <Tooltip content="Edit User">
                         <IconButton
-                          onClick={() => nav(`/profile-update/${user_id}`)}
+                          onClick={() => nav(`artist-update/${id}`)}
                           variant="text" color="green">
                           <PencilIcon className="h-4 w-4" />
                         </IconButton>

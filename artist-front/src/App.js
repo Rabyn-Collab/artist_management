@@ -12,6 +12,7 @@ import ArtistPage from './features/artist/ArtistPage'
 import SongForm from './features/song/SongForm'
 import SongUpdate from './features/song/SongUpdate'
 import ArtistSongs from './features/song/ArtistSongs'
+import ArtistUpdate from './features/artist/ArtistUpdate'
 
 const App = () => {
   const { user } = useSelector(state => state.userSlice);
@@ -33,6 +34,10 @@ const App = () => {
         {
           path: 'artist-form',
           element: <ArtistForm />
+        },
+        {
+          path: 'artist-update/:id',
+          element: <ArtistUpdate />
         },
         {
           path: 'artist-songs/:id',
