@@ -68,7 +68,7 @@ export const getAllArtists = async (req, res) => {
 export const getArtistById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await db.query("SELECT * FROM artist WHERE id = ?", [id]);
+    const [rows] = await db.query("SELECT * FROM artist WHERE user_id = ?", [id]);
     return res.status(200).json(rows);
   } catch (err) {
     return res.status(400).json({
@@ -206,40 +206,48 @@ export const csvArtistCreate = async (req, res) => {
 
 
 
-
 export const csvArtistExport = async (req, res) => {
   try {
-    // Query to fetch all artist data
+    // Query to fetch all artist data using async/await
     const sql = 'SELECT name, dob, gender, address, first_release_year, no_of_albums_released FROM artist';
-    db.query(sql, (err, result) => {
-      if (err) {
-        return res.status(500).json({ message: 'Error fetching artist data', error: err.message });
-      }
 
-      // Create a writable stream to output the CSV file
-      const filePath = './tmp/artists_export.csv';
-      const ws = fs.createWriteStream(filePath);
+    // Using promise-based query
+    const [result] = await db.query(sql);
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No artist data found in the database.' });
+    }
 
-      // Use fastCsv to write the artist data to the file
-      fastCsv
-        .write(result, { headers: true })
-        .pipe(ws)
-        .on('finish', () => {
-          // Once the file is created, send it as a response
-          res.download(filePath, 'artists_export.csv', (err) => {
-            if (err) {
-              return res.status(500).json({ message: 'Error sending CSV file', error: err.message });
+    // Create a writable stream to output the CSV file
+    const filePath = './uploads/artists_export.csv';
+    const ws = fs.createWriteStream(filePath);
+
+    // Use fastCsv to write the artist data to the file
+    fastCsv
+      .write(result, { headers: true })
+      .pipe(ws)
+      .on('finish', () => {
+        // Send the CSV file as a downloadable response
+        res.download(filePath, 'artists_export.csv', (err) => {
+          if (err) {
+            console.error('Error sending CSV file:', err);
+            return res.status(500).json({ message: 'Error sending CSV file', error: err.message });
+          }
+
+          // Clean up the temporary file after sending it
+          fs.unlink(filePath, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error('Error deleting CSV file:', unlinkErr);
             }
-
-            // Clean up the temporary file after sending it
-            fs.unlinkSync(filePath);
           });
-        })
-        .on('error', (err) => {
-          return res.status(500).json({ message: 'Error writing CSV file', error: err.message });
         });
-    });
+      })
+      .on('error', (err) => {
+        console.error('Error writing CSV file:', err);
+        return res.status(500).json({ message: 'Error writing CSV file', error: err.message });
+      });
+
   } catch (err) {
+    console.error('Unexpected error:', err);
     return res.status(500).json({ message: 'Error exporting artists to CSV', error: err.message });
   }
 };

@@ -9,7 +9,7 @@ const router = express.Router();
 // Artist routes
 router.route('/').get(checkUser, adminManagerCheck, getAllArtists).post(checkUser, artistManagerCheck, createArtist);
 router.route('/upload-csv').post(checkUser, artistManagerCheck, checkFile, csvArtistCreate);
-router.route('/export-artists').get(checkUser, artistManagerCheck, csvArtistExport);
+router.route('/export').get(checkUser, artistManagerCheck, csvArtistExport);
 router.route('/:id').get(getArtistById).patch(checkUser, adminManagerCheck, updateArtist).delete(checkUser, artistManagerCheck, removeArtist);
 
 
