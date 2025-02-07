@@ -47,10 +47,8 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -84,10 +82,10 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       message: 'User registered successfully.',
     });
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({ message: 'Internal server error.' });
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
+    });
   }
 };
 
@@ -132,9 +130,8 @@ export const getAllUsers = async (req, res) => {
     });
 
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error while fetching users',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -153,9 +150,8 @@ export const getUserById = async (req, res) => {
 
     return res.status(200).json(rows[0]);
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -186,9 +182,8 @@ export const removeUser = async (req, res) => {
     const [rows] = await db.query('DELETE FROM user WHERE id = ?', [id]);
     return res.status(200).json(rows);
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error during authentication',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
@@ -208,9 +203,8 @@ export const getArtistsUsers = async (req, res) => {
 
     return res.status(200).json(rows);
   } catch (err) {
-    return res.status(500).json({
-      message: 'Server error while fetching artists',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    return res.status(400).json({
+      message: `${err}`
     });
   }
 };
