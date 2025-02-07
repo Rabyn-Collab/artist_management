@@ -15,7 +15,7 @@ import { useRemoveUserMutation } from "../auth/userApi";
 
 const RemoveDialog = ({ isUser, id }) => {
 
-  const [removeArtist] = useRemoveArtistMutation();
+  const [removeArtist, { isLoading: load }] = useRemoveArtistMutation();
   const [removeUser, { isLoading }] = useRemoveUserMutation();
   const { user } = useSelector(state => state.userSlice);
   const [open, setOpen] = React.useState(false);
@@ -65,7 +65,7 @@ const RemoveDialog = ({ isUser, id }) => {
         </DialogBody>
         <DialogFooter>
           <Button
-
+            disabled={isLoading || load}
             variant="text"
             color="red"
             onClick={handleOpen}
@@ -73,7 +73,9 @@ const RemoveDialog = ({ isUser, id }) => {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handelRemoveFunc}>
+          <Button
+            loading={isLoading || load}
+            variant="gradient" color="green" onClick={handelRemoveFunc}>
             <span>Confirm</span>
           </Button>
         </DialogFooter>

@@ -187,7 +187,7 @@ const Register = () => {
               </div>
 
               <div className="col-span-2 sm:px-0 px-14 mt-8">
-                <Button type="submit" size="sm" className="w-full py-[10px] ">Submit</Button>
+                <Button loading={isLoading} type="submit" size="sm" className="w-full py-[10px] ">Submit</Button>
               </div>
 
               {!user && <Typography color="gray" className="mt-6 text-center font-normal">
