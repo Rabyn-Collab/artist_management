@@ -27,7 +27,7 @@ const TABLE_HEAD2 = ["Name", "Gender", "First Release Year", "No. of Albums", "L
 export function ArtistTable({ data, isUser, user }) {
   const TABLE_HEAD = user.role === 'super_admin' ? TABLE_HEAD2 : TABLE_HEAD1;
   const nav = useNavigate();
-  const [removeArtist, { isLoading }] = useRemoveArtistMutation();
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -141,7 +141,7 @@ export function ArtistTable({ data, isUser, user }) {
                     </td>}
                     {user.role === 'artist_manager' && <td className={classes}>
                       <Tooltip content="Remove User">
-                        <RemoveDialog removeFunc={removeArtist} isLoading={isLoading} id={id} />
+                        <RemoveDialog isUser={false} id={id} />
                       </Tooltip>
                     </td>}
                     <td className={classes}>
@@ -178,3 +178,4 @@ export function ArtistTable({ data, isUser, user }) {
     </Card>
   );
 }
+

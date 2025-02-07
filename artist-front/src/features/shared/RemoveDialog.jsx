@@ -10,10 +10,13 @@ import {
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { useRemoveArtistMutation } from "../artist/artistApi";
+import { useRemoveUserMutation } from "../auth/userApi";
 
-const RemoveDialog = ({ removeFunc, isLoading, isSong, id }) => {
+const RemoveDialog = ({ isUser, id }) => {
 
-
+  const [removeArtist] = useRemoveArtistMutation();
+  const [removeUser, { isLoading }] = useRemoveUserMutation();
   const { user } = useSelector(state => state.userSlice);
   const [open, setOpen] = React.useState(false);
 
@@ -21,15 +24,25 @@ const RemoveDialog = ({ removeFunc, isLoading, isSong, id }) => {
 
   const handelRemoveFunc = async () => {
     try {
-      await removeFunc({
-        id,
-        token: user?.token
-      }).umwrap();
+      if (isUser) {
+        await removeUser({
+          token: user?.token,
+          id
+        }).unwrap();
+
+      } else {
+        await removeArtist({
+          token: user?.token,
+          id
+        }).unwrap();
+      }
+
       toast.success('Removed Successfully');
       handleOpen();
     } catch (err) {
+      console.log(err);
       toast.dismiss();
-      toast.error(err.data?.message);
+      toast.error(err.data?.message || err.message);
       handleOpen();
 
     }
@@ -37,7 +50,7 @@ const RemoveDialog = ({ removeFunc, isLoading, isSong, id }) => {
 
   return (
     <>
-      {isSong ? <IconButton onClick={handleOpen} size='sm' color='pink'>
+      {!isUser ? <IconButton onClick={handleOpen} size='sm' color='pink'>
         <i className="fas fa-trash" />
       </IconButton> : <IconButton
         onClick={handleOpen}
@@ -52,7 +65,7 @@ const RemoveDialog = ({ removeFunc, isLoading, isSong, id }) => {
         </DialogBody>
         <DialogFooter>
           <Button
-            disabled={isLoading}
+
             variant="text"
             color="red"
             onClick={handleOpen}
@@ -60,7 +73,7 @@ const RemoveDialog = ({ removeFunc, isLoading, isSong, id }) => {
           >
             <span>Cancel</span>
           </Button>
-          <Button loading={isLoading} variant="gradient" color="green" onClick={handelRemoveFunc}>
+          <Button variant="gradient" color="green" onClick={handelRemoveFunc}>
             <span>Confirm</span>
           </Button>
         </DialogFooter>

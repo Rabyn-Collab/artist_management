@@ -20,7 +20,7 @@ const TABLE_HEAD = ["Name", "Email", "Phone", "Gender", "Role", "Edit", "Remove"
 export function MembersTable({ data, isUser, user }) {
 
 
-  const [removeUser, { isLoading }] = useRemoveUserMutation();
+
   const nav = useNavigate();
   return (
     <Card className="h-full w-full">
@@ -143,7 +143,7 @@ export function MembersTable({ data, isUser, user }) {
                     </td>
                     <td className={classes}>
                       <Tooltip content="Remove User">
-                        <RemoveDialog removeFunc={removeUser} isLoading={isLoading} id={id} />
+                        <RemoveDialog isUser={true} id={id} />
                       </Tooltip>
                     </td>
                   </tr>

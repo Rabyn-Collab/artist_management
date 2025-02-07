@@ -21,7 +21,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../features/auth/authSlice";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 // profile menu component
 const profileMenuItems = [
@@ -113,13 +113,15 @@ const Header = () => {
   return (
     <Navbar className="mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
-        <Typography
-          as="a"
-          href="#"
-          className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
-        >
-          Artist Management System
-        </Typography>
+        <NavLink to={'/'} replace>
+          <Typography
+
+            className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
+          >
+            Artist Management System
+          </Typography>
+        </NavLink>
+
 
 
 

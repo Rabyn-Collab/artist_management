@@ -65,11 +65,14 @@ export const artistApi = mainApi.injectEndpoints({
     }),
 
     removeArtist: builder.mutation({
-      query: (id) => ({
-        url: `/artists/${id}`,
+      query: (q) => ({
+        url: `/artists/${q.id}`,
         method: 'DELETE',
+        headers: {
+          Authorization: q.token
+        }
       }),
-      invalidatesTags: ['Artist', 'User'],
+      invalidatesTags: ['Artist'],
     }),
 
 

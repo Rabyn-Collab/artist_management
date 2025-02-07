@@ -72,9 +72,12 @@ export const userApi = mainApi.injectEndpoints({
     }),
 
     removeUser: builder.mutation({
-      query: (id) => ({
-        url: `/users/${id}`,
+      query: (q) => ({
+        url: `/users/${q.id}`,
         method: 'DELETE',
+        headers: {
+          Authorization: q.token
+        }
       }),
       invalidatesTags: ['User'],
     })
