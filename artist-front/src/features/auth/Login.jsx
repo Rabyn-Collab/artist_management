@@ -23,7 +23,7 @@ const Login = () => {
   const nav = useNavigate();
 
   return (
-    <div className="px-4 max-w-[400px] mx-auto mt-[7%]">
+    <div className="px-4 max-w-[400px] mx-auto mt-[7%] sm:mt-[20%] md:mt-[10%]">
 
       <Formik
         initialValues={{
