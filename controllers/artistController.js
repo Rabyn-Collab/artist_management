@@ -152,8 +152,11 @@ export const updateArtist = async (req, res) => {
 export const removeArtist = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await db.query('DELETE FROM user WHERE id = ?', [id]);
-    return res.status(200).json(rows);
+
+    const [rows] = await db.query('DELETE FROM artist WHERE id = ?', [id]);
+    return res.status(200).json({
+      message: "Artist removed successfully",
+    });
   } catch (err) {
     return res.status(400).json({
       message: `${err}`
