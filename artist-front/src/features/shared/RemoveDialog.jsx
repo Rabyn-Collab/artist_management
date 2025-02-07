@@ -58,7 +58,7 @@ const RemoveDialog = ({ isUser, id }) => {
         <TrashIcon className="h-4 w-4" />
       </IconButton>}
 
-      <Dialog open={open} handler={handleOpen}>
+      <Dialog open={open} handler={handleOpen} className="w-full" size="lg">
         <DialogHeader>Are you sure ?</DialogHeader>
         <DialogBody>
           You Want To Remove This User

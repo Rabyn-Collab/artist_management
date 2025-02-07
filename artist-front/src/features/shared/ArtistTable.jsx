@@ -45,7 +45,7 @@ export function ArtistTable({ data, isUser, user }) {
     } catch (err) {
 
       toast.dismiss();
-      toast.error(err.data?.message || err.message || 'Something went wrong');
+      toast.error(err.data?.message || err.message || 'no-artists record found');
     }
   };
 

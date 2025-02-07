@@ -186,9 +186,15 @@ const Register = () => {
 
               </div>
 
-              <div className="col-span-2 sm:px-0 px-14 mt-8">
-                <Button loading={isLoading} type="submit" size="sm" className="w-full py-[10px] ">Submit</Button>
+              <div className="w-full">
+                <Button
+                  loading={isLoading}
+                  type="submit" size="sm" className="w-full py-[10px] flex justify-center mt-7 ">Submit</Button>
               </div>
+
+              {/* <div className="col-span-2 sm:px-0 px-14 mt-8">
+                <Button loading={isLoading} type="submit" size="sm" className="w-full py-[10px] ">Submit</Button>
+              </div> */}
 
               {!user && <Typography color="gray" className="mt-6 text-center font-normal">
                 Already have an account ?
