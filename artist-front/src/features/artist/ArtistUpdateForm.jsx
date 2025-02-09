@@ -1,8 +1,7 @@
 import { Button, IconButton, Input, Option, Select, Typography } from "@material-tailwind/react"
 import { Formik } from "formik"
-import { useSelector } from "react-redux";
 import * as Yup from 'yup';
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, } from "react-router";
 import { toast } from "react-toastify";
 import { useUpdateArtistMutation } from "./artistApi";
 
@@ -21,6 +20,8 @@ const ArtistUpdateForm = ({ user, token }) => {
 
   const [updateUser, { isLoading }] = useUpdateArtistMutation();
   const nav = useNavigate();
+
+
 
   return (
     <div className="px-4 max-w-[500px] mx-auto mt-[3%]">
