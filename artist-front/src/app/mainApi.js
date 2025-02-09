@@ -5,7 +5,7 @@ export const mainApi = createApi({
   reducerPath: 'mainApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://artist-management-a3zi.onrender.com/api',
-    // baseUrl: 'http://192.168.1.73:5000/api',
+    //baseUrl: 'http://192.168.1.73:5000/api',
     credentials: 'include',
 
   }),

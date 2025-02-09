@@ -29,7 +29,7 @@ export function ArtistTable({ data, isUser, user }) {
   const TABLE_HEAD = user.role === 'super_admin' ? TABLE_HEAD2 : TABLE_HEAD1;
   const nav = useNavigate();
   const [importCsv, { isLoading }] = useImportCsvMutation();
-  const handleImport = async () => {
+  const handleExport = async () => {
     try {
 
       const res = await importCsv(user.token).unwrap();
@@ -62,12 +62,14 @@ export function ArtistTable({ data, isUser, user }) {
               See information about all {isUser ? 'users' : 'artists'}
             </Typography>
           </div>
-          {isUser && <div className="flex shrink-0  gap-2 sm:flex-row">
+          {isUser && <div className="flex shrink-0  gap-2 sm:flex-wrap ">
             <Button onClick={() => nav(isUser && user?.role !== 'artist_manager' ? '/register' : '/artist-form')} className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> {isUser && user?.role !== 'artist_manager' ? 'Add user' : 'Add artist'}
             </Button>
-            <Button onClick={handleImport} loading={isLoading} size="sm">Csv Import</Button>
-            {/* <UploadCsv /> */}
+            <UploadCsv />
+
+            <Button onClick={handleExport} loading={isLoading} size="sm">Csv Export</Button>
+
 
 
           </div>}

@@ -17,7 +17,7 @@ const valSchema = Yup.object({
   dob: Yup.string().required(),
   gender: Yup.string().required(),
   address: Yup.string().required(),
-  role: Yup.string().required(),
+  // role: Yup.string().required(),
 });
 
 
@@ -40,7 +40,7 @@ const UpdateForm = ({ user, token }) => {
           dob: user?.dob,
           gender: user?.gender,
           address: user?.address,
-          role: user?.role
+          // role: user?.role
         }}
         onSubmit={async (val) => {
           try {
@@ -131,7 +131,7 @@ const UpdateForm = ({ user, token }) => {
                   </div>
 
 
-                  {logUser?.role !== "artist_manager" && <div>
+                  {/* {logUser?.role === "super_admin" && <div>
                     <Select
                       value={values.role}
                       name="role"
@@ -144,7 +144,7 @@ const UpdateForm = ({ user, token }) => {
                     {errors.role && touched.role && <h1 className="text-red-700 text-sm">{errors.role}</h1>}
                   </div>
 
-                  }
+                  } */}
 
 
 

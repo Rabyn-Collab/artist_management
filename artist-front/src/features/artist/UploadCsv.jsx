@@ -1,5 +1,5 @@
-import { Input } from '@material-tailwind/react'
-import React from 'react'
+import { Button } from '@material-tailwind/react'
+import React, { useRef } from 'react'
 import { useUploadCsvMutation } from './artistApi'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -7,10 +7,12 @@ import { useSelector } from 'react-redux';
 const UploadCsv = () => {
   const { user } = useSelector(state => state.userSlice);
   const [uploadCsv, { isLoading }] = useUploadCsvMutation();
+  const ref = useRef();
 
-  const handleChange = async (file) => {
+  const handleChange = async (e) => {
+    const fileUploaded = e.target.files[0];
     const formData = new FormData();
-    formData.append('csv', file);
+    formData.append('csv', fileUploaded);
     try {
       await uploadCsv({
         token: user?.token,
@@ -21,16 +23,25 @@ const UploadCsv = () => {
       toast.dismiss();
       toast.error(err.data?.message);
     }
+    e.target.value = null;
   }
+
+  const handleClick = event => {
+    ref.current.click();
+  };
   return (
 
-    <div className='w-[220px]'>
-      <Input
-        onChange={(e) => handleChange(e.target.files[0])}
-        disabled={isLoading}
+    <div >
+
+      <Button
+        onClick={handleClick}
+        loading={isLoading} size="sm">Csv Import</Button>
+      <input
+        ref={ref}
+        onChange={handleChange}
         name='csv'
         accept=".csv"
-        type='file' label='upload csv file' className="flex items-center gap-3 " placeholder='' variant='outlined' color='black' />
+        type='file' className="hidden" placeholder='' />
     </div>
 
 
