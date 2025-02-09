@@ -136,24 +136,26 @@ const Register = () => {
                     {errors.last_name && touched.last_name && <h1 className="text-red-700 text-sm">{errors.last_name}</h1>}
                   </div>
 
+                  <div>
+                    <div className="relative flex w-full max-w-[24rem]">
+                      <Input
+                        name="password"
+                        onChange={handleChange}
+                        type={show ? "text" : "password"}
+                        value={values.password}
+                        label="Password"
+                        className="pr-20"
+                        containerProps={{
+                          className: "min-w-0",
+                        }}
+                      />
+                      <IconButton onClick={() => setShow(!show)} variant="text"
+                        className="!absolute right-1  rounded" >
+                        <i className={show ? "fa fa-unlock" : "fa fa-lock"} />
+                      </IconButton>
 
-                  <div className="relative flex w-full max-w-[24rem]">
-                    <Input
-                      name="password"
-                      onChange={handleChange}
-                      type={show ? "text" : "password"}
-                      value={values.password}
-                      label="Password"
-                      className="pr-20"
-                      containerProps={{
-                        className: "min-w-0",
-                      }}
-                    />
-                    <IconButton onClick={() => setShow(!show)} variant="text"
-                      className="!absolute right-1  rounded" >
-                      <i className={show ? "fa fa-unlock" : "fa fa-lock"} />
-                    </IconButton>
-
+                    </div>
+                    {errors.password && touched.password && <h1 className="text-red-700 text-sm">{errors.password}</h1>}
                   </div>
 
 

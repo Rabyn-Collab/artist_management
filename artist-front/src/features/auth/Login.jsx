@@ -1,5 +1,5 @@
-import { Button, IconButton, Input, Typography } from "@material-tailwind/react"
-import { Formik } from "formik"
+import { Button, IconButton, Input, Typography } from "@material-tailwind/react";
+import { Formik } from "formik";
 import { useDispatch } from "react-redux";
 import * as Yup from 'yup';
 import { useNavigate } from "react-router";
@@ -8,13 +8,11 @@ import { toast } from "react-toastify";
 import { addUser } from "./authSlice";
 import { useState } from "react";
 
-
+// Update validation schema to check for email or phone
 const valSchema = Yup.object({
-  email: Yup.string().email().required(),
-  password: Yup.string().min(5).max(100).required(),
+  emailOrPhone: Yup.string().required('Email or phone is required'),
+  password: Yup.string().min(5).max(100).required('Password is required'),
 });
-
-
 
 const Login = () => {
   const [loginUser, { isLoading }] = useUserLoginMutation();
@@ -27,14 +25,19 @@ const Login = () => {
 
       <Formik
         initialValues={{
-          email: '',
+          emailOrPhone: '',
           password: ''
         }}
         onSubmit={async (val) => {
           try {
-            const response = await loginUser(val).unwrap();
+            // Determine if input is an email or phone and adjust the request accordingly
+            const userData = {
+              emailOrPhone: val.emailOrPhone,
+              password: val.password
+            };
+
+            const response = await loginUser(userData).unwrap();
             dispatch(addUser(response.data));
-            // nav(-1);
             toast.success('Login Successfully');
           } catch (err) {
             toast.dismiss();
@@ -45,26 +48,26 @@ const Login = () => {
         validationSchema={valSchema}
       >
 
-        {
-          ({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
-            <form onSubmit={handleSubmit} className="">
-              <Typography variant="h4" color="blue-gray">
-                Log in to System
-              </Typography>
-              <Typography color="gray" className="mt-1 font-normal mb-6">
-                Nice to meet you! Enter your details to Login.
-              </Typography>
-              <div className="space-y-6">
-                <div>
-                  <Input
-                    name="email"
-                    onChange={handleChange}
-                    type="email"
-                    value={values.email}
-                    label="Email" />
-
-                  {errors.email && touched.email && <h1 className="text-red-700 text-sm">{errors.email}</h1>}
-                </div>
+        {({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
+          <form onSubmit={handleSubmit}>
+            <Typography variant="h4" color="blue-gray">
+              Log in to System
+            </Typography>
+            <Typography color="gray" className="mt-1 font-normal mb-6">
+              Nice to meet you! Enter your details to Login.
+            </Typography>
+            <div className="space-y-6">
+              <div>
+                <Input
+                  name="emailOrPhone"
+                  onChange={handleChange}
+                  type="text"
+                  value={values.emailOrPhone}
+                  label="Email or Phone"
+                />
+                {errors.emailOrPhone && touched.emailOrPhone && <h1 className="text-red-700 text-sm">{errors.emailOrPhone}</h1>}
+              </div>
+              <div>
                 <div className="relative flex w-full max-w-[24rem]">
                   <Input
                     name="password"
@@ -77,41 +80,30 @@ const Login = () => {
                       className: "min-w-0",
                     }}
                   />
-                  <IconButton onClick={() => setShow(!show)} variant="text"
-                    className="!absolute right-1  rounded" >
+                  <IconButton onClick={() => setShow(!show)} variant="text" className="!absolute right-1 rounded">
                     <i className={show ? "fa fa-unlock" : "fa fa-lock"} />
                   </IconButton>
-
                 </div>
-
-
-                <div className="w-full">
-                  <Button
-                    loading={isLoading}
-                    type="submit" size="sm" className="w-full py-[10px] flex justify-center ">Submit</Button>
-                </div>
-
-
-
+                {errors.password && touched.password && <h1 className="text-red-700 text-sm">{errors.password}</h1>}
               </div>
 
-              <Typography color="gray" className="mt-6 text-center font-normal ">
-                Don't have an account ?
-                <Button onClick={() => nav('/register')} variant="text" className="px-2 py-2">Sign Up</Button>
-              </Typography>
+              <div className="w-full">
+                <Button
+                  loading={isLoading}
+                  type="submit" size="sm" className="w-full py-[10px] flex justify-center ">Submit</Button>
+              </div>
+            </div>
 
-            </form>
-          )
-        }
+            <Typography color="gray" className="mt-6 text-center font-normal ">
+              Don't have an account?
+              <Button onClick={() => nav('/register')} variant="text" className="px-2 py-2">Sign Up</Button>
+            </Typography>
 
-
+          </form>
+        )}
       </Formik>
-
-
-
-
-
     </div>
-  )
+  );
 }
-export default Login
+
+export default Login;
