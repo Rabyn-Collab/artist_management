@@ -63,10 +63,20 @@ export const registerUser = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone, dob, gender, address, role } = req.body;
     const formattedDob = new Date(dob).toISOString().split('T')[0];
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: 'Invalid phone number format. It must be 10 digits.' });
+    }
     //Check if the email is already registered
     const [existingUser] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
     if (existingUser.length > 0) {
       return res.status(400).json({ message: 'user already exists' });
+    }
+
+    const [existingPhone] = await db.query('SELECT * FROM user WHERE phone = ?', [phone]);
+    if (existingPhone.length > 0) {
+      return res.status(400).json({ message: 'User with this phone number already exists.' });
     }
 
     // Hash the password
@@ -159,12 +169,12 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, dob, gender, address, role } = req.body;
+    const { first_name, last_name, dob, gender, address } = req.body;
     const formattedDob = new Date(dob).toISOString().split('T')[0];
 
     const [rows] = await db.query(
-      'UPDATE user SET first_name = ?, last_name = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = NOW() WHERE id = ?',
-      [first_name, last_name, formattedDob, gender, address, role, id]
+      'UPDATE user SET first_name = ?, last_name = ?, dob = ?, gender = ?, address = ?, updated_at = NOW() WHERE id = ?',
+      [first_name, last_name, formattedDob, gender, address, id]
     );
     return res.status(200).json({
       message: "User updated successfully",
