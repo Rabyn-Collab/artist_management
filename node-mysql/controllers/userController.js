@@ -3,16 +3,32 @@ import { validateLogin, validateRegister } from "../utils/validator.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-
 export const loginUser = async (req, res) => {
-  // Validate the request body
-  const { error, value } = validateLogin(req.body);
-  if (error) return res.status(400).json(error.details);
-
-  const { email, password } = req.body;
+  const { emailOrPhone, password } = req.body;
 
   try {
-    const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+    // Determine if input is an email or phone (10 digits)
+    let query = '';
+    let queryParams = [];
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/; // Only 10-digit phone numbers
+
+    if (emailRegex.test(emailOrPhone)) {
+      // If it's an email, search by email
+      query = 'SELECT * FROM user WHERE email = ?';
+      queryParams = [emailOrPhone];
+    } else if (phoneRegex.test(emailOrPhone)) {
+      // If it's a 10-digit phone number, search by phone
+      query = 'SELECT * FROM user WHERE phone = ?';
+      queryParams = [emailOrPhone];
+    } else {
+      return res.status(400).json({
+        message: 'Invalid email or phone number format'
+      });
+    }
+
+    const [rows] = await db.query(query, queryParams);
     if (rows.length === 0) {
       return res.status(400).json({
         message: 'User not found'
@@ -29,13 +45,6 @@ export const loginUser = async (req, res) => {
 
     // 3. Create a token
     const token = jwt.sign({ id: rows[0].id, role: rows[0].role }, process.env.JWT_SECRET);
-
-    // res.cookie('jwt', token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   sameSite: 'none',
-    //   maxAge: 24 * 60 * 60 * 1000 // 1 day
-    // });
 
     // 4. Send the token in the response
     return res.status(200).json({
@@ -63,10 +72,20 @@ export const registerUser = async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone, dob, gender, address, role } = req.body;
     const formattedDob = new Date(dob).toISOString().split('T')[0];
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: 'Invalid phone number format. It must be 10 digits.' });
+    }
     //Check if the email is already registered
     const [existingUser] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
     if (existingUser.length > 0) {
       return res.status(400).json({ message: 'user already exists' });
+    }
+
+    const [existingPhone] = await db.query('SELECT * FROM user WHERE phone = ?', [phone]);
+    if (existingPhone.length > 0) {
+      return res.status(400).json({ message: 'User with this phone number already exists.' });
     }
 
     // Hash the password
@@ -159,12 +178,12 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, dob, gender, address, role } = req.body;
+    const { first_name, last_name, dob, gender, address } = req.body;
     const formattedDob = new Date(dob).toISOString().split('T')[0];
 
     const [rows] = await db.query(
-      'UPDATE user SET first_name = ?, last_name = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = NOW() WHERE id = ?',
-      [first_name, last_name, formattedDob, gender, address, role, id]
+      'UPDATE user SET first_name = ?, last_name = ?, dob = ?, gender = ?, address = ?, updated_at = NOW() WHERE id = ?',
+      [first_name, last_name, formattedDob, gender, address, id]
     );
     return res.status(200).json({
       message: "User updated successfully",

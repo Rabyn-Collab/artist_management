@@ -68,7 +68,7 @@ export const getAllArtists = async (req, res) => {
 export const getArtistById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await db.query("SELECT * FROM artist WHERE user_id = ?", [id]);
+    const [rows] = await db.query("SELECT * FROM artist WHERE id = ?", [id]);
     return res.status(200).json(rows);
   } catch (err) {
     return res.status(400).json({
@@ -116,100 +116,125 @@ export const removeArtist = async (req, res) => {
 
 
 
+
+
 export const csvArtistCreate = async (req, res) => {
   try {
+    const expectedColumns = ['name', 'dob', 'gender', 'address', 'first_release_year', 'no_of_albums_released', 'user_id'];
     const fileRows = [];
-    const expectedColumns = ['name', 'dob', 'gender', 'address', 'first_release_year', 'no_of_albums_released'];
+    let headersValidated = false;
+    let validationErrors = [];
 
-    // Flag to check if a response has already been sent
-    let responseSent = false;
-
-    fs.createReadStream(req.filePath)
+    const stream = fs.createReadStream(req.filePath)
       .pipe(fastCsv.parse({ headers: true }))
-      .on('data', (row) => {
-        // Column Validation: Ensure that all required columns are present in the CSV
-        const columns = Object.keys(row);
-        const isValidColumns = expectedColumns.every(col => columns.includes(col));
-
-        if (!isValidColumns && !responseSent) {
-          fs.unlinkSync(req.filePath);
-          responseSent = true; // Mark response as sent
-          return res.status(400).json({ message: 'Invalid CSV format. Missing or extra columns detected.' });
+      .on('headers', (headers) => {
+        // Validate CSV headers
+        const isValidColumns = expectedColumns.every(col => headers.includes(col));
+        if (!isValidColumns) {
+          validationErrors.push('Invalid CSV format. Missing or extra columns detected.');
         }
+        headersValidated = isValidColumns;
+      })
+      .on('data', (row) => {
+        if (!headersValidated) return; // Skip rows if headers are invalid
 
-        // Row Validation: Ensure correct data format
-        const artistName = row.name || null;
-        const dob = row.dob && !isNaN(Date.parse(row.dob)) ? row.dob : null; // Check if dob is a valid date
-        const gender = ['m', 'f', 'o'].includes(row.gender) ? row.gender : null; // Check if gender is valid
-        const address = row.address || null;
-        const firstReleaseYear = row.first_release_year && !isNaN(parseInt(row.first_release_year)) ? parseInt(row.first_release_year) : null; // Check if valid number
-        const albumsReleased = row.no_of_albums_released && !isNaN(parseInt(row.no_of_albums_released)) ? parseInt(row.no_of_albums_released) : null; // Check if valid number
+        // Row Validation
+        const artistName = row.name?.trim() || null;
 
-        // If any field is invalid, reject the row
-        if (!artistName || !dob || !gender || !address || !firstReleaseYear || !albumsReleased) {
-          if (!responseSent) {
-            responseSent = true; // Mark response as sent
-            return res.status(400).json({ message: `Invalid data in row: ${JSON.stringify(row)}` });
+        // Validate dob (expecting format YYYY-MM-DD)
+        const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+        let dob = null;
+        if (row.dob) {
+          const trimmedDob = row.dob.trim();
+          if (dobRegex.test(trimmedDob)) {
+            dob = trimmedDob;
+          } else {
+            // If not in the correct format, try to parse it manually (e.g., for date strings like "Fri Feb 07 2025...")
+            const parsedDob = new Date(trimmedDob);
+            if (!isNaN(parsedDob.getTime())) {
+              dob = parsedDob.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+            }
           }
         }
 
-        // Add the validated row data
-        fileRows.push([
-          artistName,
-          dob,
-          gender,
-          address,
-          firstReleaseYear,
-          albumsReleased,
-          req.user.id // Assuming that the logged-in user (artist_manager) is the one assigning the artist
-        ]);
-      })
-      .on('end', () => {
-        fs.unlinkSync(req.filePath); // Remove the temporary file after processing
+        // Validate gender
+        const gender = ['m', 'f', 'o'].includes(row.gender?.trim().toLowerCase()) ? row.gender.trim().toLowerCase() : null;
 
-        // If no valid rows were found, send an error
-        if (fileRows.length === 0 && !responseSent) {
-          responseSent = true; // Mark response as sent
+        // Validate address
+        const address = row.address?.trim() || null;
+
+        // Ensure first_release_year is a valid 4-digit year
+        const firstReleaseYear = row.first_release_year && /^\d{4}$/.test(row.first_release_year.trim())
+          ? parseInt(row.first_release_year.trim())
+          : null;
+
+        // Ensure albumsReleased is a valid number (default to 0 if missing)
+        const albumsReleased = row.no_of_albums_released && /^\d+$/.test(row.no_of_albums_released.trim())
+          ? parseInt(row.no_of_albums_released.trim())
+          : 0;
+
+        // Ensure userId is a valid number
+        const userId = row.user_id && /^\d+$/.test(row.user_id.trim())
+          ? parseInt(row.user_id.trim())
+          : req.user.id; // Use CSV user_id if provided, else fallback to logged-in user
+
+        // Validate required fields
+        if (!artistName || !dob || !gender || !address || !firstReleaseYear || userId == null) {
+          validationErrors.push(`Invalid data in row: ${JSON.stringify(row)}`);
+        } else {
+          fileRows.push([artistName, dob, gender, address, firstReleaseYear, albumsReleased, userId]);
+        }
+      })
+      .on('end', async () => {
+        console.log("Validation Errors:", validationErrors);
+
+        fs.unlink(req.filePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+        });
+
+        if (validationErrors.length > 0) {
+          return res.status(400).json({ message: `${validationErrors}`, errors: validationErrors });
+        }
+
+        if (fileRows.length === 0) {
           return res.status(400).json({ message: 'No valid artist data found in CSV.' });
         }
 
-        // Insert the artists into the Artist table
+        // Insert into DB
         const sql = 'INSERT INTO artist (name, dob, gender, address, first_release_year, no_of_albums_released, user_id) VALUES ?';
-        db.query(sql, [fileRows], (err, result) => {
-          if (err) {
-            if (!responseSent) {
-              responseSent = true; // Mark response as sent
-              return res.status(500).json({ message: 'Error processing CSV file', error: err.message });
-            }
-          }
-          if (!responseSent) {
-            responseSent = true; // Mark response as sent
-            res.json({ message: 'CSV imported successfully', insertedRows: result.affectedRows });
-          }
-        });
+        try {
+          const [result] = await db.query(sql, [fileRows]);
+          res.json({ message: 'CSV imported successfully', insertedRows: result.affectedRows });
+        } catch (err) {
+          console.error("Database Insertion Error:", err);
+          res.status(500).json({ message: err.message });
+        }
       })
       .on('error', (err) => {
-        // Handle errors during CSV parsing
-        if (!responseSent) {
-          responseSent = true; // Mark response as sent
-          return res.status(500).json({ message: 'Error processing CSV file', error: err.message });
-        }
+        console.error("CSV Processing Error:", err);
+        fs.unlink(req.filePath, (unlinkErr) => {
+          if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+        });
+
+        res.status(500).json({ message: 'Error processing CSV file', error: err.message });
       });
+
   } catch (err) {
-    // Ensure response is sent only once in case of an error
-    if (!responseSent) {
-      responseSent = true; // Mark response as sent
-      return res.status(400).json({ message: `${err}` });
-    }
+    console.error("Unexpected Server Error:", err);
+    fs.unlink(req.filePath, (unlinkErr) => {
+      if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+    });
+
+    res.status(500).json({ message: `Server error: ${err.message}` });
   }
-}
+};
 
 
 
 export const csvArtistExport = async (req, res) => {
   try {
     // Query to fetch all artist data using async/await
-    const sql = 'SELECT name, dob, gender, address, first_release_year, no_of_albums_released FROM artist';
+    const sql = 'SELECT name, dob, gender, address, first_release_year, no_of_albums_released, user_id FROM artist';
 
     // Using promise-based query
     const [result] = await db.query(sql);
