@@ -12,12 +12,11 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router";
 import RemoveDialog from "./RemoveDialog";
-import { useRemoveUserMutation } from "../auth/userApi";
 
 
 const TABLE_HEAD = ["Name", "Email", "Phone", "Gender", "Role", "Edit", "Remove"];
 
-export function MembersTable({ data, isUser, user }) {
+export function MembersTable({ data, isUser, user, setPage }) {
 
 
 
@@ -35,7 +34,7 @@ export function MembersTable({ data, isUser, user }) {
             </Typography>
           </div>
           {isUser && <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button onClick={() => nav(isUser && user?.role !== 'artist_manager' ? '/register' : '/artist-form')} className="flex items-center gap-3" size="sm">
+            <Button onClick={() => nav(isUser && user?.role !== 'artist_manager' ? '/add-user' : '/artist-form')} className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> {isUser && user?.role !== 'artist_manager' ? 'Add user' : 'Add artist'}
             </Button>
           </div>}
@@ -158,10 +157,14 @@ export function MembersTable({ data, isUser, user }) {
           Page {data?.page}  {`of ${data?.totalPages}`}
         </Typography>
         <div className="flex gap-2">
-          <Button disabled={data?.page === 1} variant="outlined" size="sm">
+          <Button
+            onClick={() => setPage(data?.page - 1)}
+            disabled={data?.page === 1} variant="outlined" size="sm">
             Previous
           </Button>
-          <Button disabled={data?.page === data?.totalPages || data?.totalPages === 0} variant="outlined" size="sm">
+          <Button
+            onClick={() => setPage(data?.page + 1)}
+            disabled={data?.page === data?.totalPages || data?.totalPages === 0} variant="outlined" size="sm">
             Next
           </Button>
         </div>

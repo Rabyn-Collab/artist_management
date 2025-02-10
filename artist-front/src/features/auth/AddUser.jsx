@@ -1,8 +1,6 @@
 import { Button, IconButton, Input, Option, Select, Typography } from "@material-tailwind/react"
 import { Formik } from "formik"
-import { useSelector } from "react-redux";
-import * as Yup from 'yup';
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useUserRegisterMutation } from "./userApi";
 import { toast } from "react-toastify";
 import { useState } from "react";
@@ -12,11 +10,9 @@ import { registerchema } from "../../utils/validator";
 
 
 
-const Register = () => {
-  const label = useLocation();
+const AddUser = () => {
   const [userRegister, { isLoading }] = useUserRegisterMutation();
   const [show, setShow] = useState(false);
-  const { user } = useSelector(state => state.userSlice);
   const nav = useNavigate();
 
   return (
@@ -38,10 +34,9 @@ const Register = () => {
           try {
 
             await userRegister(val).unwrap();
-            toast.success('Register Successfully');
+            toast.success('user added successfully');
             nav(-1);
           } catch (err) {
-
             toast.error(err.data?.message);
           }
         }}
@@ -52,10 +47,10 @@ const Register = () => {
           ({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
             <form onSubmit={handleSubmit} className="">
               <Typography variant="h4" color="blue-gray">
-                Register to System
+                Add User
               </Typography>
               <Typography color="gray" className="mt-1 font-normal mb-6">
-                Nice to meet you! Enter your details to Register.
+                Nice to meet you! Enter user details.
               </Typography>
 
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-1">
@@ -183,14 +178,9 @@ const Register = () => {
                   type="submit" size="sm" className="w-full py-[10px] flex justify-center mt-7 ">Submit</Button>
               </div>
 
-              {/* <div className="col-span-2 sm:px-0 px-14 mt-8">
-                <Button loading={isLoading} type="submit" size="sm" className="w-full py-[10px] ">Submit</Button>
-              </div> */}
 
-              {!user && <Typography color="gray" className="mt-6 text-center font-normal">
-                Already have an account ?
-                <Button onClick={() => nav(-1)} variant="text" className="px-2 py-2">Login</Button>
-              </Typography>}
+
+
 
             </form>
           )
@@ -206,4 +196,4 @@ const Register = () => {
     </div>
   )
 }
-export default Register
+export default AddUser

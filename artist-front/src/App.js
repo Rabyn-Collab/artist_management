@@ -13,6 +13,7 @@ import SongForm from './features/song/SongForm'
 import SongUpdate from './features/song/SongUpdate'
 import ArtistSongs from './features/song/ArtistSongs'
 import ArtistUpdate from './features/artist/ArtistUpdate'
+import AddUser from './features/auth/AddUser'
 
 const App = () => {
   const { user } = useSelector(state => state.userSlice);
@@ -28,8 +29,8 @@ const App = () => {
         },
 
         {
-          path: 'register',
-          element: <Register />
+          path: 'add-user',
+          element: <AddUser />
         },
         {
           path: 'artist-form',

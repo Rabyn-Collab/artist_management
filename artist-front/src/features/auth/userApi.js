@@ -30,7 +30,10 @@ export const userApi = mainApi.injectEndpoints({
         url: '/users',
         method: 'GET',
         headers: {
-          Authorization: q
+          Authorization: q.token
+        },
+        params: {
+          page: q.page || 1,
         }
       }),
       providesTags: ['User'],
