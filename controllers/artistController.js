@@ -68,6 +68,18 @@ export const getAllArtists = async (req, res) => {
 export const getArtistById = async (req, res) => {
   try {
     const { id } = req.params;
+    const [rows] = await db.query("SELECT * FROM artist WHERE user_id = ?", [id]);
+    return res.status(200).json(rows);
+  } catch (err) {
+    return res.status(400).json({
+      message: `${err}`
+    });
+  }
+}
+
+export const getArtistByManager = async (req, res) => {
+  try {
+    const { id } = req.params;
     const [rows] = await db.query("SELECT * FROM artist WHERE id = ?", [id]);
     return res.status(200).json(rows);
   } catch (err) {
