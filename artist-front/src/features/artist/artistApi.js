@@ -26,6 +26,13 @@ export const artistApi = mainApi.injectEndpoints({
       }),
       providesTags: ['Artist'],
     }),
+    getArtistByManager: builder.query({
+      query: (id) => ({
+        url: `/artists/get-artist/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Artist'],
+    }),
 
 
     createArtist: builder.mutation({
@@ -101,5 +108,5 @@ export const artistApi = mainApi.injectEndpoints({
 });
 
 
-export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation, useUpdateArtistMutation, useImportCsvMutation } = artistApi;
+export const { useGetAllArtistsQuery, useCreateArtistMutation, useGetArtistByIdQuery, useRemoveArtistMutation, useUploadCsvMutation, useUpdateArtistMutation, useImportCsvMutation, useGetArtistByManagerQuery } = artistApi;
 

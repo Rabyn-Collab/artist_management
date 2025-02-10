@@ -12,19 +12,27 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useRemoveArtistMutation } from "../artist/artistApi";
 import { useRemoveUserMutation } from "../auth/userApi";
+import { useRemoveSongMutation } from "../song/songApi";
 
-const RemoveDialog = ({ isUser, id }) => {
+const RemoveDialog = ({ isUser, id, isArtist }) => {
 
   const [removeArtist, { isLoading: load }] = useRemoveArtistMutation();
+  const [removeSong, { isLoading: songLoad }] = useRemoveSongMutation();
   const [removeUser, { isLoading }] = useRemoveUserMutation();
   const { user } = useSelector(state => state.userSlice);
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(!open);
 
+
   const handelRemoveFunc = async () => {
     try {
-      if (isUser) {
+      if (isArtist) {
+        await removeSong({
+          token: user?.token,
+          id
+        }).unwrap();
+      } else if (isUser) {
         await removeUser({
           token: user?.token,
           id
@@ -65,7 +73,7 @@ const RemoveDialog = ({ isUser, id }) => {
         </DialogBody>
         <DialogFooter>
           <Button
-            disabled={isLoading || load}
+            disabled={isLoading || load || songLoad}
             variant="text"
             color="red"
             onClick={handleOpen}
@@ -74,7 +82,7 @@ const RemoveDialog = ({ isUser, id }) => {
             <span>Cancel</span>
           </Button>
           <Button
-            loading={isLoading || load}
+            loading={isLoading || load || songLoad}
             variant="gradient" color="green" onClick={handelRemoveFunc}>
             <span>Confirm</span>
           </Button>

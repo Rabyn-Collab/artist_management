@@ -6,6 +6,7 @@ import SongsList from '../song/SongsList';
 
 const ArtistPage = ({ user }) => {
   const { data, isLoading, error } = useGetArtistByIdQuery(user?.id);
+
   if (isLoading) {
     return <Typography>Loading...</Typography>
   }

@@ -1,13 +1,13 @@
 import React from 'react'
-import { useGetArtistsSongsQuery, useRemoveSongMutation } from './songApi'
+import { useGetArtistsSongsQuery, } from './songApi'
 import { Button, Card, IconButton, List, ListItem, Typography } from '@material-tailwind/react';
 import { useNavigate } from 'react-router';
 import RemoveDialog from '../shared/RemoveDialog';
 
 const SongsList = ({ user }) => {
-  console.log(user);
+
   const nav = useNavigate();
-  const [removeSong, { isLoading: load }] = useRemoveSongMutation();
+
   const { data, isLoading, error } = useGetArtistsSongsQuery(user?.id);
 
   if (isLoading) {
@@ -61,7 +61,7 @@ const SongsList = ({ user }) => {
                   size='sm' color='green'>
                   <i className="fas fa-edit" />
                 </IconButton>
-                <RemoveDialog removeFunc={removeSong} isLoading={load} isSong={true} id={song.id} />
+                <RemoveDialog id={song.id} isArtist={true} />
               </div>
             </ListItem>
           ))}
