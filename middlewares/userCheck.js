@@ -34,7 +34,6 @@ export const artistManagerCheck = (req, res, next) => {
 }
 
 export const artistCheck = (req, res, next) => {
-  console.log(req.role);
   if (req.role !== 'artist') return res.status(401).json({ message: 'you are not authorised' });
   next();
 }
